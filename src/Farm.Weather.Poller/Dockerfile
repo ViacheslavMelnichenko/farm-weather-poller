@@ -1,11 +1,8 @@
 FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
 WORKDIR /app
 
-ARG VAULT_URL
-ARG VAULT_TOKEN
-
-ENV VAULT_API_URL=$VAULT_URL
-ENV VAULT_API_TOKEN=$VAULT_TOKEN
+ENV VAULT_API_URL=""
+ENV VAULT_API_TOKEN=""
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src

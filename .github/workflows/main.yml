@@ -64,9 +64,6 @@ jobs:
           file: src/Farm.Weather.Poller/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          build-args: |
-            VAULT_URL=${{ secrets.VAULT_URL }}
-            VAULT_TOKEN=${{ secrets.VAULT_TOKEN }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
   #            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.GIT_SHA }}
@@ -89,8 +86,8 @@ jobs:
             docker pull '${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest';
             echo "Stop and remove current container:";
             docker rm -f farm-weather-poller;
-            echo "Starting new container:";
-            docker run --name farm-weather-poller -d '${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest';
+            echo "Starting new container with args:";
+            docker run --name farm-weather-poller -d -e VAULT_API_URL=${{ secrets.VAULT_URL }} -e VAULT_API_TOKEN=${{ secrets.VAULT_TOKEN }} '${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest';
             echo "Prune images and volumes:";
             docker image prune -af;
             docker volume prune -f;
