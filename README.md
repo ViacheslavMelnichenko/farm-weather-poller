@@ -6,7 +6,7 @@ Weather poller.
 ## Features
 
 - Poll weather data from [WeatherApi](https://www.weatherapi.com)
-- Send it to specific rabbitMQ exchange via MassTransit
+- Send it to specific rabbitMQ exchange via MassTransit for future consuming by separate service
 
 ## Tech
 
