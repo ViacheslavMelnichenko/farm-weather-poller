@@ -79,11 +79,11 @@ jobs:
         run: dotnet test tests/Farm.Weather.Poller.UnitTests/Farm.Weather.Poller.UnitTests.csproj --no-build --verbosity normal -c Release
 
       - name: Create the package
-        if: github.ref == 'refs/heads/main' && ${{ env.NUGET_VERSION_CHANGED == 'true' }}
+        if: github.ref == 'refs/heads/main' && needs.version_check.outputs.vesion-changed == 'true'
         run: dotnet pack -c Release src/Farm.Weather.Contracts/Farm.Weather.Contracts.csproj
 
       - name: Upload build artifacts
-        if: github.ref == 'refs/heads/main' && ${{ env.NUGET_VERSION_CHANGED == 'true' }}
+        if: github.ref == 'refs/heads/main' && needs.version_check.outputs.vesion-changed == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: build_and_test_result
