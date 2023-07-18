@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
 
@@ -48,21 +48,14 @@ public class VaultConfigurationProvider : ConfigurationProvider
             new VaultClientSettings(vaultUrl, new TokenAuthMethodInfo(vaultToken));
         var vaultClient = new VaultClient(vaultClientSettings);
         var path = $"{Env}/{typeof(Program).Assembly.GetName().Name}";
-        var allKeyValues =
-            vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path, mountPoint: "farm").Result.Data.Data;
+        var allKeyValues = vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync<JsonObject>(path, mountPoint: "farm").Result.Data.Data;
 
         foreach (var keyValue in allKeyValues)
         {
-            if (string.IsNullOrEmpty(keyValue.Key) || string.IsNullOrEmpty(keyValue.Value.ToString()))
-            {
-                throw new ArgumentNullException();
-            }
-
             var key = keyValue.Key;
-            var value = JsonSerializer.Deserialize<IDictionary<string, string>>(
-                JObject.FromObject(keyValue.Value).ToString());
+            var dictionary = keyValue.Value.Deserialize<IDictionary<string, string>>();
 
-            foreach (var v in value!)
+            foreach (var v in dictionary!)
             {
                 data.Add($"{key}:{v.Key}", v.Value);
             }
