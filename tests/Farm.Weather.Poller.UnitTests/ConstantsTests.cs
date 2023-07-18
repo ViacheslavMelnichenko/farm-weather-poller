@@ -1,3 +1,4 @@
+using Farm.Weather.Contracts.Common;
 using FluentAssertions;
 
 namespace Farm.Weather.Poller.UnitTests;
@@ -9,9 +10,9 @@ public class ConstantsTests
     {
         // Arrange
         // Act
-        var constantsCount = Constants.Constants.UkrainianCities.Count();
+        var constantsCount = Constants.UkrainianCities.Count();
 
         // Assert
-        constantsCount.Should().Be(6);
+        constantsCount.Should().Be(8);
     }
 }

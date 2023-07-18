@@ -1,19 +1,18 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Farm.Weather.Poller.Configuration
+namespace Farm.Weather.Poller.Configuration;
+
+public class VaultConfigurationSource : IConfigurationSource
 {
-    public class VaultConfigurationSource : IConfigurationSource
+    private readonly string _hostingEnvironmentEnvironmentName;
+
+    public VaultConfigurationSource(string hostingEnvironmentEnvironmentName)
     {
-        private readonly string _hostingEnvironmentEnvironmentName;
+        _hostingEnvironmentEnvironmentName = hostingEnvironmentEnvironmentName;
+    }
 
-        public VaultConfigurationSource(string hostingEnvironmentEnvironmentName)
-        {
-            _hostingEnvironmentEnvironmentName = hostingEnvironmentEnvironmentName;
-        }
-
-        public IConfigurationProvider Build(IConfigurationBuilder builder)
-        {
-            return new VaultConfigurationProvider(_hostingEnvironmentEnvironmentName);
-        }
+    public IConfigurationProvider Build(IConfigurationBuilder builder)
+    {
+        return new VaultConfigurationProvider(_hostingEnvironmentEnvironmentName);
     }
 }

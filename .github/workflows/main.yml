@@ -1,4 +1,4 @@
-﻿name: Main
+﻿name: main
 
 on:
   push:
@@ -7,27 +7,55 @@ on:
   pull_request:
     branches:
       - '*'
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger
 
 env:
-  DOTNET_VERSION: 6.0.x
+  DOTNET_VERSION: 7.0.x
   IMAGE_NAME: 'farm-weather-poller'
   GIT_SHA: ${{ github.sha }}
 
 jobs:
+  check_previous_version:
+    name: Check previous nuget version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get previous commit version
+        id: get_version
+        run: |
+          PREVIOUS_VERSION=$(git show HEAD~1:src/Farm.Weather.Contracts/Farm.Weather.Contracts.csproj | grep -Po '(?<=<Version>)([^<]+)')
+          echo "::set-output name=version::$PREVIOUS_VERSION"
+
+      - name: Check for version change
+        id: check_version
+        run: |
+          CURRENT_VERSION=$(grep -Po '(?<=<Version>)([^<]+)' src/Farm.Weather.Contracts/Farm.Weather.Contracts.csproj)
+
+          if [ "$PREVIOUS_VERSION" != "$CURRENT_VERSION" ]; then
+            echo "Version has changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
+            echo "::set-output name=version_changed::true"
+          else
+            echo "Version has not changed."
+            echo "::set-output name=version_changed::false"
+          fi
+        env:
+          PREVIOUS_VERSION: ${{ steps.get_version.outputs.version }}
+
   build_and_test:
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v2.1.0
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Install dependencies
+      - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
@@ -35,6 +63,38 @@ jobs:
 
       - name: UnitTest
         run: dotnet test tests/Farm.Weather.Poller.UnitTests/Farm.Weather.Poller.UnitTests.csproj --no-build --verbosity normal -c Release
+
+      - name: Create the package
+        if: steps.check_version.outputs.version_changed == 'true'
+        run: dotnet pack -c Release src/Farm.Weather.Contracts/Farm.Weather.Contracts.csproj
+
+      - name: Upload build artifacts
+        if: steps.check_version.outputs.version_changed == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: build_and_test_result
+          path: src/Farm.Weather.Contracts/bin/Release/*.nupkg
+
+  publish:
+    name: Publish to Nuget
+    needs: build_and_test
+    if: github.ref == 'refs/heads/main' && steps.check_version.outputs.version_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Download test artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build_and_test_result
+
+      - name: Publish the package to nuget.org
+        run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
 
   docker_build_and_publish:
     name: Docker Build and Publish
@@ -58,7 +118,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: src/Farm.Weather.Poller/Dockerfile
@@ -77,9 +137,10 @@ jobs:
       - name: Executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
+          debug: true
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_Key }}
           port: ${{ secrets.SSH_PORT }}
           script: |
             echo "Pull latest image:";

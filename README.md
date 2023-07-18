@@ -1,8 +1,7 @@
 # farm-weather-poller
 Weather poller.
 
-![main](https://github.com/ViacheslavMelnichenko/farm-weather-poller/actions/workflows/main.yml/badge.svg?branch=main)
-
+[![main](https://github.com/ViacheslavMelnichenko/farm-weather-poller/actions/workflows/main.yml/badge.svg)](https://github.com/ViacheslavMelnichenko/farm-weather-poller/actions/workflows/main.yml)
 ## Features
 
 - Poll weather data from [WeatherApi](https://www.weatherapi.com)

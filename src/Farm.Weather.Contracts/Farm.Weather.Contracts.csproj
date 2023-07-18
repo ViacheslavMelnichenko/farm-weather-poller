@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+	<Version>1.0.2</Version>
+    <Authors>Melnichenko Viacheslav</Authors>
+    <Company>Farm</Company>
+    <PackageDescription>Common liabriaries for Farm projects</PackageDescription>
+    <RepositoryUrl>https://github.com/ViacheslavMelnichenko/farm-weather-poller</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="7.0.2" />
+  </ItemGroup>
+
+</Project>

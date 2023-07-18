@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farm.Weather.Poller", "src\Farm.Weather.Poller\Farm.Weather.Poller.csproj", "{A63BE767-2184-43E8-8C3D-71CAA6B7F039}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farm.Weather.Poller", "src\Farm.Weather.Poller\Farm.Weather.Poller.csproj", "{A63BE767-2184-43E8-8C3D-71CAA6B7F039}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A3FA4BFD-DD45-415D-A1FE-8C6B5E514548}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,7 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A3FA4BFD-DD4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8157F513-F030-48B1-9752-84B33E210CB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farm.Weather.Poller.UnitTests", "tests\Farm.Weather.Poller.UnitTests\Farm.Weather.Poller.UnitTests.csproj", "{A2985EF1-7E44-4A5C-B1AF-9F17D4214E76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farm.Weather.Poller.UnitTests", "tests\Farm.Weather.Poller.UnitTests\Farm.Weather.Poller.UnitTests.csproj", "{A2985EF1-7E44-4A5C-B1AF-9F17D4214E76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farm.Weather.Contracts", "src\Farm.Weather.Contracts\Farm.Weather.Contracts.csproj", "{4637FB17-C539-4854-A5D3-1881EEF68896}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,15 +30,20 @@ Global
 		{A2985EF1-7E44-4A5C-B1AF-9F17D4214E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2985EF1-7E44-4A5C-B1AF-9F17D4214E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2985EF1-7E44-4A5C-B1AF-9F17D4214E76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4637FB17-C539-4854-A5D3-1881EEF68896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4637FB17-C539-4854-A5D3-1881EEF68896}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4637FB17-C539-4854-A5D3-1881EEF68896}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4637FB17-C539-4854-A5D3-1881EEF68896}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A131E564-4FD5-41EC-9695-72D48C0BD647}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A63BE767-2184-43E8-8C3D-71CAA6B7F039} = {A3FA4BFD-DD45-415D-A1FE-8C6B5E514548}
 		{A2985EF1-7E44-4A5C-B1AF-9F17D4214E76} = {8157F513-F030-48B1-9752-84B33E210CB0}
+		{4637FB17-C539-4854-A5D3-1881EEF68896} = {A3FA4BFD-DD45-415D-A1FE-8C6B5E514548}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A131E564-4FD5-41EC-9695-72D48C0BD647}
 	EndGlobalSection
 EndGlobal
