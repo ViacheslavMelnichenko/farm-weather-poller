@@ -26,21 +26,25 @@ jobs:
       - name: Determine if version changed
         id: version_changed
         run: |
-          if git show HEAD~1:src/Farm.Weather.Contracts/Farm.Weather.Contracts.csproj &>/dev/null; then
-            PREVIOUS_VERSION=$(git show HEAD~1:src/Farm.Weather.Contracts/Farm.Weather.Contracts.csproj | grep -Po '(?<=<Version>)([^<]+)')
-          else
-            PREVIOUS_VERSION="INITIAL_VERSION"
-          fi
-
+          set -x
+          # Get the current version from the current commit
           CURRENT_VERSION=$(grep -Po '(?<=<Version>)([^<]+)' src/Farm.Weather.Contracts/Farm.Weather.Contracts.csproj)
 
-          if [ "$PREVIOUS_VERSION" != "$CURRENT_VERSION" ]; then
-            echo "Version has changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
-            echo "NUGET_VERSION_CHANGED=true" >> $GITHUB_ENV
+          # Attempt to fetch the previous commit hash (HEAD~1)
+          PREVIOUS_COMMIT=$(git log --pretty=format:%H -n 2 | tail -n 1)
+
+          if [ -z "$PREVIOUS_COMMIT" ]; then
+            # If there is no previous commit (e.g., during the initial commit), set PREVIOUS_VERSION to "INITIAL_VERSION"
+            PREVIOUS_VERSION="INITIAL_VERSION"
           else
-            echo "Version has not changed."
-            echo "NUGET_VERSION_CHANGED=false" >> $GITHUB_ENV
+            # Get the previous version from the file in the previous commit
+            PREVIOUS_VERSION=$(git show $PREVIOUS_COMMIT:src/Farm.Weather.Contracts/Farm.Weather.Contracts.csproj | grep -Po '(?<=<Version>)([^<]+)')
           fi
+
+      - name: Debug Info
+        run: |
+            echo "Current branch: ${{ github.ref }}"
+            echo "NUGET_VERSION_CHANGED: ${{ env.NUGET_VERSION_CHANGED }}"
 
   build_and_test:
     name: Build and Test
@@ -83,6 +87,11 @@ jobs:
       needs.version_check.outputs.NUGET_VERSION_CHANGED == 'true'
     runs-on: ubuntu-latest
     steps:
+      - name: Debug Info
+        run: |
+            echo "Current branch: ${{ github.ref }}"
+            echo "NUGET_VERSION_CHANGED: ${{ env.NUGET_VERSION_CHANGED }}"
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
         with:
